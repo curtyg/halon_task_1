@@ -1,5 +1,8 @@
 import unreal
-from unreal import Vector
+from unreal import Vector, ProgressBar
+import itertools
+
+from noise import generate
 
 # import argparse
 
@@ -8,8 +11,8 @@ import os
 import math
 
 
-def spawn_cube(location: Vector = Vector(), cube_scale: Vector = Vector.ONE):
-
+def spawn_cube(x, y, z, cube_scale: Vector = Vector.ONE) -> unreal.StaticMeshActor:
+    location = Vector(x, y, z)
     # basically getting an object that can allow me to interact with one subsystem of
     # editor....in this case the actor subsystem
     editor_actor_subs = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
@@ -19,15 +22,28 @@ def spawn_cube(location: Vector = Vector(), cube_scale: Vector = Vector.ONE):
 
     # place the actor in the scene on the editor
     static_mesh_actor = editor_actor_subs.spawn_actor_from_class(actor_class, location)
+    static_mesh_actor.set_actor_label(f"Gen_StaticMeshCube_{x}{y}{z}")
 
     # give the the cube mesh so it displays a cube
     cube_mesh = unreal.EditorAssetLibrary.load_asset("/Engine/BasicShapes/Cube.Cube")
 
     # set the assign the cube mesh to the actor
     static_mesh_actor.static_mesh_component.set_static_mesh(cube_mesh)
-    static_mesh_actor.static_mesh_component.set_editor_property(
-        "relative_scale3d", cube_scale
-    )
+
+    # print(f"DEFAULT SCALE: {static_mesh_actor.get_actor_scale3d()}")
+    # print(f"DEFAULT RELATIVE SCALE: {static_mesh_actor.get_actor_relative_scale3d()}")
+
+    return static_mesh_actor
+
+
+def delete_all_cubes():
+    editor_actor_subs = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+
+    all_lvl_actors = editor_actor_subs.get_all_level_actors()
+
+    for actor in all_lvl_actors:
+        if actor.get_actor_label().startswith("Gen_StaticMeshCube"):
+            editor_actor_subs.destroy_actor(actor)
 
 
 def generate_grid(size: int, relative_distance: int = 100):
@@ -38,68 +54,54 @@ def generate_grid(size: int, relative_distance: int = 100):
     return grid_coords
 
 
-# def print_input(input):
-#     print(input)
+def generate_terrain(
+    width: int, z_depth: int = 5, scale: int = 100, cube_scale: float = 1.0
+):
 
-def generate_noise(x: float, y: float, z: float):
-    pass
-    
-def main(input):
-    
+    counter = 0
+    scale = scale * cube_scale
+    text_label = "Generating Cubes!"
+    with unreal.ScopedSlowTask(width*width*z_depth, text_label) as slow_task:
+        slow_task.make_dialog(True) 
+        for x, y in itertools.product(range(width), repeat=2):
+            x *= scale
+            y *= scale
+            for z in range(z_depth):
+                
+                if slow_task.should_cancel():
+                    break
+                slow_task.enter_progress_frame(1)
+                
+                z *= scale
+                
+                noise = generate(x * 0.01, y * 0.01, z * 0.01)
+                noise += 1
+                noise /= 2
+
+                if noise > 0:
+                    counter += 1
+                    cube = spawn_cube(x, y, z)
+
+        unreal.log(f"CUBES CREATED: {counter}")
+
+
+def main():
+    progress_bar = ProgressBar()
+    delete_all_cubes()
+    generate_terrain(15, 5, 100)
+
+
+
     # # Get the current working directory
     # current_directory = os.getcwd()
 
-    
-    # parser = argparse.ArgumentParser(description="Editor inputted args")
-    
-    # parser.add_argument(
-    #     "--input", 
-    #     type=str, 
-    #     help="The input string", 
-    #     required=True
-    # )
+    # cube = spawn_cube(0,0,0)
 
-    # args = parser.parse_args()
+    # origin, extent = cube.get_actor_bounds(False)
 
-    # if args.input:
-    #     print(args.input)
-        
-    print(input)
-    
-    cube_scale = Vector(0.5, 0.5, 0.5)
+    # # Calculate the absolute size of the cube (extent is half the size, so multiply by 2)
+    # absolute_size = extent * 2
+    # print(absolute_size)
 
-    cube_coords = generate_grid(30)
-    print(cube_coords)
 
-    for row in cube_coords:
-        for x, y in row:
-            spawn_cube(Vector(x, y, 0), cube_scale)
-            
-# if __name__ == "__main__":
-    
-#     # Get the current working directory
-#     current_directory = os.getcwd()
-
-    
-#     parser = argparse.ArgumentParser(description="Editor inputted args")
-    
-#     parser.add_argument(
-#         "--input", 
-#         type=str, 
-#         help="The input string", 
-#         required=True
-#     )
-
-#     args = parser.parse_args()
-
-#     if args.input:
-#         print(args.input)
-        
-#     cube_scale = Vector(0.5, 0.5, 0.5)
-
-#     cube_coords = generate_grid(8)
-#     print(cube_coords)
-
-#     for row in cube_coords:
-#         for x, y in row:
-#             spawn_cube(Vector(x, y, 0), cube_scale)
+main()
