@@ -2,8 +2,10 @@ import unreal
 from unreal import Vector, ProgressBar
 import itertools
 
-from noise import generate
+import noise
+from importlib import *
 
+reload(noise)
 # import argparse
 
 import os
@@ -40,10 +42,14 @@ def delete_all_cubes():
     editor_actor_subs = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
 
     all_lvl_actors = editor_actor_subs.get_all_level_actors()
-
-    for actor in all_lvl_actors:
-        if actor.get_actor_label().startswith("Gen_StaticMeshCube"):
-            editor_actor_subs.destroy_actor(actor)
+    with unreal.ScopedSlowTask(len(all_lvl_actors), "Deleting old cubes...") as slow_task:
+        slow_task.make_dialog(True)
+        for actor in all_lvl_actors:
+            if slow_task.should_cancel():
+                break
+            slow_task.enter_progress_frame(1)
+            if actor.get_actor_label().startswith("Gen_StaticMeshCube"):
+                editor_actor_subs.destroy_actor(actor)
 
 
 def generate_grid(size: int, relative_distance: int = 100):
@@ -55,30 +61,37 @@ def generate_grid(size: int, relative_distance: int = 100):
 
 
 def generate_terrain(
-    width: int, z_depth: int = 5, scale: int = 100, cube_scale: float = 1.0
+    width: int,
+    z_depth: int = 5,
+    scale: int = 100,
+    cube_scale: float = 1.0,
+    seed: int = 42,
 ):
 
     counter = 0
     scale = scale * cube_scale
     text_label = "Generating Cubes!"
-    with unreal.ScopedSlowTask(width*width*z_depth, text_label) as slow_task:
-        slow_task.make_dialog(True) 
+    with unreal.ScopedSlowTask(width * width * z_depth, text_label) as slow_task:
+        slow_task.make_dialog(True)
         for x, y in itertools.product(range(width), repeat=2):
             x *= scale
             y *= scale
+
             for z in range(z_depth):
-                
                 if slow_task.should_cancel():
                     break
                 slow_task.enter_progress_frame(1)
                 
                 z *= scale
                 
-                noise = generate(x * 0.01, y * 0.01, z * 0.01)
-                noise += 1
-                noise /= 2
-
-                if noise > 0:
+                n = noise.generate(x * 0.01, 0, 0, seed)
+                n += 1
+                n /= 2
+                
+                print(f"X: {x}, Y: {y}, Z : {z}")
+                print(n)
+                
+                if n > 0:
                     counter += 1
                     cube = spawn_cube(x, y, z)
 
@@ -88,9 +101,7 @@ def generate_terrain(
 def main():
     progress_bar = ProgressBar()
     delete_all_cubes()
-    generate_terrain(15, 5, 100)
-
-
+    # generate_terrain(30, 4, 100, seed=41)
 
     # # Get the current working directory
     # current_directory = os.getcwd()

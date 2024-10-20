@@ -6,6 +6,7 @@ import random
 import sys
 
 
+
 def get_constant_vector(perm_value):
 
     # I would have used a match statment below but for some reason
@@ -39,12 +40,13 @@ def lerp(t, a, b):
     return a + t * (b - a)
 
 
-def get__permutation_list(permuation_wrap_size: int = 256):
+def get__permutation_list(seed: int, permuation_wrap_size: int = 256):
     permutation: list[int] = [i for i in range(permuation_wrap_size)]
+    random.seed(seed)
     random.shuffle(permutation)
     return permutation * 2
 
-def generate(x: float, y: float, z: float):
+def generate(x: float, y: float, z: float, seed: int):
     
     ex = math.floor(x) & 255
     ey = math.floor(y) & 255
@@ -82,7 +84,7 @@ def generate(x: float, y: float, z: float):
     # toprightback = topleftfront       = p[p[p[1] + 2] + 1]
     # bottomrightback = bottomleftfront = p[p[p[1] + 1] + 1]
 
-    p = get__permutation_list()
+    p = get__permutation_list(seed)
 
     value_bottom_left_front = p[p[p[ex] + ey] + ez]
     value_bottom_right_front = p[p[p[ex + 1] + ey] + ez]
