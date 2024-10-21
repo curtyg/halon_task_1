@@ -7,7 +7,7 @@ import sys
 
 
 
-def get_constant_vector(perm_value):
+def get_constant_vector(perm_value: int):
 
     # I would have used a match statment below but for some reason
     # my unreal engine python version is 3.9.7 despite it saying
@@ -32,11 +32,11 @@ def get_constant_vector(perm_value):
         return Vector(-1, -1, -1)
 
 
-def fade(t):
+def fade(t: float):
     return t * t * t * (t * (t * 6 - 15) + 10)
 
 
-def lerp(t, a, b):
+def lerp(t: float, a: float, b: float):
     return a + t * (b - a)
 
 

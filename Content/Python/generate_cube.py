@@ -10,7 +10,7 @@ reload(noise)
 DEFAULT_CUBE_SIZE = 100
 
 
-def spawn_cube(x, y, z, cube_scale: Vector = Vector.ONE) -> unreal.StaticMeshActor:
+def spawn_cube(x: int, y: int, z: int, cube_scale: Vector = Vector.ONE) -> unreal.StaticMeshActor:
     location = Vector(x, y, z)
     # basically getting an object that can allow me to interact with one subsystem of
     # editor....in this case the actor subsystem
@@ -50,15 +50,6 @@ def delete_all_cubes():
             if actor.get_actor_label().startswith("Gen_StaticMeshCube"):
                 editor_actor_subs.destroy_actor(actor)
 
-
-def generate_grid(size: int, relative_distance: int = 100):
-    grid_coords = [
-        [(i * relative_distance, j * relative_distance) for i in range(size)]
-        for j in range(size)
-    ]
-    return grid_coords
-
-
 def generate_terrain(
     width: int,
     z_depth: int = 5,
@@ -92,7 +83,7 @@ def generate_terrain(
         unreal.log(f"CUBES CREATED: {counter}")
 
 
-def main(width, z_depth, seed):
+def main(width: int, z_depth: int, seed: int):
 
     if width > 50:
         unreal.log_warning("Please select a width less than 100")
