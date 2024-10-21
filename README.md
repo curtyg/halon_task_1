@@ -11,7 +11,7 @@ I also decided early on I would attempt to do the task mainly utilising python, 
 Initially I knew there would be some things I would need to learn regardless of what task I chose, so I had a series of small tasks to begin with which included but were not limited to:
 
 - Downloading an setting up UE5.3 for the first time
-- Understanding the terms used for objects in the engine (e.g. Actors etc.)
+- Understanding the terms used for objects and other aspects of the engine (e.g. Actors, Meshes, Widgets etc.)
 - Rendering a single cube to a scene
 - Delete a cube from the scene
 - Learning how to create a Editor UI component for my python script

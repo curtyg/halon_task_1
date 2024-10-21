@@ -84,7 +84,7 @@ def generate_terrain(
                 
                 z *= scale
                 
-                n = noise.generate(x * 0.01, 0, 0, seed)
+                n = noise.generate(x * 0.01, y * 0.01, z * 0.01, seed)
                 n += 1
                 n /= 2
                 
