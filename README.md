@@ -26,13 +26,13 @@ Another challenge was just the lack of resource on actually using Python with UE
 
 As a result learning to use the python API through a combination of a few tutorials on the web and some bad chatGPT code was difficult and I did often find myself just searching the API guessing class names or functions that might exist and might do what I want - which was a big time sink.
 
+The engine does not run well on so I was immediately looking for things to scrap from the template project it created for me to speed it up. Even with this I think there was something going on with deleted cubes not being fully deleted as the more work i did, the slower the program got to use. By the end this significantly slowed me down....
+
 ## Experience with Unreal Engine
 
 Prior to this I had no experience with unreal engine. This closest would have been Godot, which i have messed around with for a couple of weeks once, doing 2D sprite-based stuff. I did download unity once and start to do a tutorial but I don't think I got far. It was also 2D.
 
 Layouts of all game engines do seem to hae a little crossover in how they look so on initially opening UE5 it was not as intimidating as it might have otherwise been. I know there'd be some hierarchical view of things in the scene, a scene view, an output for logs and a windows for inputting parameters for different objects in the scene.
-
-It doesn't run too well on my personal laptop so I was immediately looking for things to scrap from the template project it created for me to speed it up. 
 
 I was able to find a tutorial showing how to set up a python script in the editor to run it, and how to connect it to a button in a editor utility widget. I think without this tutorial it would have been very difficult to work ou simple stuff like how to "find" my python script in the editor as there were some obtuse plugin settings that needed to be updated before the scripts would appear.
 
@@ -51,4 +51,11 @@ My algorithm doesn't really work as I'd hoped. The ideal outcome would have been
 - Had more variables that code be passed in to affect the algorithm/procedural generation
 
 ## How to run the project
+
+1. Clone the project and open the project in Unreal Engine 5.3
+2. Navigate to File -> Open Level... and select 'test_level'
+3. Go to Content Browser -> All/Content/Python -> right click on 'CubeGen' and select 'Run Editor Uility Widget'
+4. Once the widget appears, enter some integers for the values (0 < width < 100, 0 < z_depth < 10) and click on 'Generate Cubes'
+5. Entering new or the same values and clicking on 'Generate Cubes' will delete the existing cubes and regenerate new cubes
+
 
