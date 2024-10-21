@@ -1,16 +1,13 @@
 import unreal
 from unreal import Vector, ProgressBar
 import itertools
-
+import sys
 import noise
 from importlib import *
 
 reload(noise)
-# import argparse
 
-import os
-
-import math
+DEFAULT_CUBE_SIZE = 100
 
 
 def spawn_cube(x, y, z, cube_scale: Vector = Vector.ONE) -> unreal.StaticMeshActor:
@@ -42,7 +39,9 @@ def delete_all_cubes():
     editor_actor_subs = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
 
     all_lvl_actors = editor_actor_subs.get_all_level_actors()
-    with unreal.ScopedSlowTask(len(all_lvl_actors), "Deleting old cubes...") as slow_task:
+    with unreal.ScopedSlowTask(
+        len(all_lvl_actors), "Deleting old cubes..."
+    ) as slow_task:
         slow_task.make_dialog(True)
         for actor in all_lvl_actors:
             if slow_task.should_cancel():
@@ -63,56 +62,52 @@ def generate_grid(size: int, relative_distance: int = 100):
 def generate_terrain(
     width: int,
     z_depth: int = 5,
-    scale: int = 100,
     cube_scale: float = 1.0,
     seed: int = 42,
 ):
 
     counter = 0
-    scale = scale * cube_scale
+    scale = DEFAULT_CUBE_SIZE * cube_scale
     text_label = "Generating Cubes!"
+    
     with unreal.ScopedSlowTask(width * width * z_depth, text_label) as slow_task:
         slow_task.make_dialog(True)
         for x, y in itertools.product(range(width), repeat=2):
-            x *= scale
-            y *= scale
-
             for z in range(z_depth):
                 if slow_task.should_cancel():
                     break
                 slow_task.enter_progress_frame(1)
-                
-                z *= scale
-                
-                n = noise.generate(x * 0.01, y * 0.01, z * 0.01, seed)
-                n += 1
-                n /= 2
-                
+
+                n = noise.generate(x * 0.1, y * 0.1, z * 0.1, seed)
+                n += 1.0
+                n /= 2.0
+
                 print(f"X: {x}, Y: {y}, Z : {z}")
                 print(n)
-                
-                if n > 0:
+
+                if n > 0.5:
                     counter += 1
-                    cube = spawn_cube(x, y, z)
+                    cube = spawn_cube(x * scale, y * scale, z * scale)
 
         unreal.log(f"CUBES CREATED: {counter}")
 
 
-def main():
-    progress_bar = ProgressBar()
+def main(width, z_depth, seed):
+
+    if width > 50:
+        unreal.log_warning("Please select a width less than 100")
+        sys.exit()
+    if z_depth > 10:
+        unreal.log_warning("Please select a z_depth less than 10")
+        sys.exit()
+
+    if any(v == 0 for v in [width, z_depth, seed]):
+        unreal.log_warning(
+            "Please select non-zero integer values for width, z_depth and seed"
+        )
+        sys.exit()
+
+    unreal.log(f"Generating with WIDTH: {width}, Z_DEPTH: {z_depth}, SEED: {seed}")
+
     delete_all_cubes()
-    # generate_terrain(30, 4, 100, seed=41)
-
-    # # Get the current working directory
-    # current_directory = os.getcwd()
-
-    # cube = spawn_cube(0,0,0)
-
-    # origin, extent = cube.get_actor_bounds(False)
-
-    # # Calculate the absolute size of the cube (extent is half the size, so multiply by 2)
-    # absolute_size = extent * 2
-    # print(absolute_size)
-
-
-main()
+    generate_terrain(width, z_depth, 1.0, seed=seed)
