@@ -78,14 +78,14 @@ def generate_terrain(
                     break
                 slow_task.enter_progress_frame(1)
 
-                n = noise.generate(x * 0.1, y * 0.1, z * 0.1, seed)
-                n += 1.0
-                n /= 2.0
+                n = noise.generate(x, y, z, seed)
+                # n += 1.0
+                # n /= 2.0
 
                 print(f"X: {x}, Y: {y}, Z : {z}")
                 print(n)
 
-                if n > 0.5:
+                if n > 0:
                     counter += 1
                     cube = spawn_cube(x * scale, y * scale, z * scale)
 
