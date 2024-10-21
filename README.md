@@ -12,7 +12,7 @@ Initially I knew there would be some things I would need to learn regardless of 
 
 ## Computer Science principles applied
 
-Having decided on doing Task 1 I knew i would have to decide on an algorithm to use. There seemed to be a number of resources online discussing procedural generation, including a wiki dedicated to it and the different techniques. At some point I decided on using Perlin noise - purely because I could find both Ken Perlin's original (improved) version (in Java) and another article breaking down how the algorithm works.
+Having decided on doing Task 1 I knew i would have to decide on an algorithm to use. There seemed to be a number of resources online discussing procedural generation, including a wiki dedicated to it and the different techniques. At some point I decided on using Perlin noise. I had seen some mention of it being used for terrain generation in games. I could also find both Ken Perlin's original (improved) version (in Java) and another article breaking down how the algorithm works.
 
 I then went about implementing the algorithm in Python using the Unreal Engine python API for the vector math.
 
@@ -24,9 +24,9 @@ Having come from a software development background using mostly high level langu
 
 Another challenge was just the lack of resource on actually using Python with UE5. The API documentation is extensive but very poor - in that there are little to no examples and often very brief and poor descriptions of what a class or function call does. Due to this, ChatGPT wasn't much help either - from experience it makes up function definitions and class methods with APIs or libraries whenever there is a lack of worked examples on the web. This was very much the case here. The developer forums on unreal engines website also weren't much help in regards to python. 
 
-As a result learning to use the python API through a combination of a few tutorials on the web and some bad chatGPT code was difficult and I did often find myself just searching the API guessing class names or functions that might exist and might do what I want - which was a big time sink.
+As a result learning to use the python API through a combination of a few tutorials on the web and some bad chatGPT code was difficult and I did often find myself just searching the API guessing class names or functions that might exist and might do what I want - which was another big time sink. Though by the end I feel I was getting a handle of some of the more useful and commonly used classes and functions in the API.
 
-The engine does not run well on so I was immediately looking for things to scrap from the template project it created for me to speed it up. Even with this I think there was something going on with deleted cubes not being fully deleted as the more work i did, the slower the program got to use. By the end this significantly slowed me down....
+The engine does not run well on so I was immediately looking for things to scrap from the template project it created for me to speed it up. Even with this I think there was something going on with deleted cubes not being fully deleted as the more work i did, the slower the program got to use. By the end this significantly slowed me down
 
 ## Experience with Unreal Engine
 
